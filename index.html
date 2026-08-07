@@ -1,0 +1,396 @@
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026年8月人力成本分析报告</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            padding: 30px 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e6ed;
+            padding-bottom: 15px;
+        }
+        .section {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            padding: 28px;
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 22px;
+            background: #3b82f6;
+            border-radius: 2px;
+        }
+        #chart {
+            width: 100%;
+            height: 1200px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        thead th {
+            background: #f0f4f8;
+            color: #1a1a2e;
+            font-weight: 600;
+            padding: 12px 14px;
+            text-align: right;
+            border-bottom: 2px solid #e0e6ed;
+            white-space: nowrap;
+        }
+        thead th:first-child {
+            text-align: left;
+        }
+        tbody td {
+            padding: 11px 14px;
+            text-align: right;
+            border-bottom: 1px solid #eef2f7;
+        }
+        tbody td:first-child {
+            text-align: left;
+        }
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+        .cost-highlight {
+            font-weight: 600;
+            color: #e11d48;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #eef2f7;
+        }
+        .unit-note {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+        .conclusion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .conclusion-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+        .conclusion-card h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #1a1a2e;
+        }
+        .conclusion-card p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #475569;
+        }
+        .tag {
+            display: inline-block;
+            background: #eff6ff;
+            color: #3b82f6;
+            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: 6px;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            .conclusion-grid {
+                grid-template-columns: 1fr;
+            }
+            #chart {
+                height: 1000px;
+            }
+            body {
+                padding: 16px 10px;
+            }
+            .section {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 2026年8月人力成本分析报告</h1>
+        <p class="subtitle">自动生成 · 数据截止2026年8月 · 单位：人民币元</p>
+
+        <!-- 图表部分 -->
+        <div class="section">
+            <div class="section-title">各部门平均人力成本对比</div>
+            <div id="chart"></div>
+        </div>
+
+        <!-- 部门表格 -->
+        <div class="section">
+            <div class="section-title">部门详细数据汇总</div>
+            <div class="unit-note">按平均成本降序排列 · 人数 = 2026 Q2 平均人数 · 总成本 = 本年累计实际发生</div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>部门</th>
+                            <th>人数</th>
+                            <th>总成本（元）</th>
+                            <th>平均成本（元/人）</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deptTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 负责人表格 -->
+        <div class="section">
+            <div class="section-title">团队负责人成本总览</div>
+            <div class="unit-note">按总成本降序排列 · 成员数 = 名下团队 Q2 平均人数合计</div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>负责人</th>
+                            <th>所属部门</th>
+                            <th>成员数</th>
+                            <th>总成本（元）</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ownerTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 分析结论 -->
+        <div class="section">
+            <div class="section-title">分析结论与建议</div>
+            <div class="conclusion-grid">
+                <div class="conclusion-card">
+                    <h4>🔍 人均成本最高部门</h4>
+                    <p><strong>570 G&amp;A - President's Office</strong> 人均成本约 <strong>91.0万元</strong>，为所有部门中最高。该部门仅配置2人，属于高管级团队，薪资水平显著高于其他部门，导致人均指标被拉高。</p>
+                </div>
+                <div class="conclusion-card">
+                    <h4>📈 成本总额与人数分布</h4>
+                    <p><strong>Zhang Jian</strong> 名下团队人数达124人，总成本3747万元，均位列第一；<strong>Andrew Zhang</strong> 管理跨销售/行政/战略等11个部门，总成本2015万元，覆盖面最广。</p>
+                </div>
+                <div class="conclusion-card">
+                    <h4>⚖️ 研发类部门成本特征</h4>
+                    <p>模拟（Analog）与数字（Digital）研发部门人均成本约为45~65万元，处于全公司中上游，反映研发人才市场薪酬竞争力较高。其中 <strong>105.2 R&amp;D - Analog</strong> 人均65.3万元，在常规业务部门中位居前列。</p>
+                </div>
+                <div class="conclusion-card">
+                    <h4>💡 管理建议</h4>
+                    <p>建议重点关注人均成本异常偏高的小部门（如总裁办、企业市场部），核实是否包含高管薪酬或一次性项目支出；同时对人均成本较低的支撑部门（如行政、PMO）评估编制与薪酬合理性，避免人才流失风险。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 数据准备（按平均成本降序）
+        const deptData = [
+            { dept: "570 G&A - President's Office", headcount: 2, cost: 1820178, avg: 910089 },
+            { dept: "300 Marketing - Corporate Marke", headcount: 2, cost: 1580034, avg: 790017 },
+            { dept: "310.2 Marketing – Product", headcount: 4, cost: 2639333, avg: 659833 },
+            { dept: "105.2 R&D - Analog", headcount: 8, cost: 5224442, avg: 653055 },
+            { dept: "540 G&A - Strategic Business Development", headcount: 5, cost: 2628987, avg: 525797 },
+            { dept: "110.2 R&D - Digital", headcount: 17, cost: 8345283, avg: 490899 },
+            { dept: "310.1 Marketing – Product", headcount: 5, cost: 2392371, avg: 478474 },
+            { dept: "105.1 R&D - Analog", headcount: 14, cost: 6370714, avg: 455051 },
+            { dept: "220 Sales - FAE", headcount: 6, cost: 2683830, avg: 447305 },
+            { dept: "590 G&A - Legal", headcount: 2, cost: 874495, avg: 437248 },
+            { dept: "110 R&D - Digital", headcount: 10, cost: 4334649, avg: 433465 },
+            { dept: "520 G&A - Finance", headcount: 16, cost: 6445293, avg: 402831 },
+            { dept: "115.1 R&D - Layout", headcount: 7, cost: 2742500, avg: 391786 },
+            { dept: "110.1 R&D - Digital", headcount: 29, cost: 11122941, avg: 383553 },
+            { dept: "130.2 R&D - System Eng AE", headcount: 18, cost: 6776660, avg: 376481 },
+            { dept: "530 G&A - HR", headcount: 6, cost: 2222522, avg: 370420 },
+            { dept: "200 Sales", headcount: 10, cost: 3685302, avg: 368530 },
+            { dept: "200.2 Sales", headcount: 3, cost: 1087475, avg: 362492 },
+            { dept: "125 R&D - System Eng SW", headcount: 21, cost: 7380044, avg: 351431 },
+            { dept: "135.1 R&D - Technology Innovation Lab", headcount: 16, cost: 5519743, avg: 344984 },
+            { dept: "115.2 R&D - Layout", headcount: 7, cost: 2373796, avg: 339114 },
+            { dept: "130.1 R&D - System Eng AE", headcount: 43, cost: 14223531, avg: 330780 },
+            { dept: "580 G&A - Internal Audit", headcount: 1, cost: 327803, avg: 327803 },
+            { dept: "560 G&A - IT", headcount: 5, cost: 1633302, avg: 326660 },
+            { dept: "200.1 Sales", headcount: 5, cost: 1566973, avg: 313395 },
+            { dept: "220.2 Sales - FAE", headcount: 2, cost: 568932, avg: 284466 },
+            { dept: "120 R&D - Test", headcount: 10, cost: 2554910, avg: 255491 },
+            { dept: "410 Operations", headcount: 15, cost: 3203615, avg: 213574 },
+            { dept: "220.1 Sales - FAE", headcount: 16, cost: 3337533, avg: 208596 },
+            { dept: "130 R&D - Engineering Support", headcount: 12, cost: 1697693, avg: 141474 },
+            { dept: "550 G&A - Admin", headcount: 12, cost: 1565541, avg: 130462 },
+            { dept: "140 R&D - PMO", headcount: 2, cost: 256850, avg: 128425 }
+        ];
+
+        // 负责人数据（按总成本降序）
+        const ownerData = [
+            { owner: "Zhang Jian", depts: "120 R&D - Test, 125 R&D - System Eng SW, 130 R&D - Engineering Support, 130.1 R&D - System Eng AE, 130.2 R&D - System Eng AE, 410 Operations, 560 G&A - IT", headcount: 124, cost: 37469755 },
+            { owner: "Andrew Zhang", depts: "200 Sales, 200.1 Sales, 200.2 Sales, 220 Sales - FAE, 220.1 Sales - FAE, 220.2 Sales - FAE, 540 G&A - Strategic Business Development, 550 G&A - Admin, 570 G&A - President's Office, 580 G&A - Internal Audit, 590 G&A - Legal", headcount: 64, cost: 20147049 },
+            { owner: "Ma Ke", depts: "105.1 R&D - Analog, 105.2 R&D - Analog, 115.1 R&D - Layout, 115.2 R&D - Layout", headcount: 36, cost: 16711452 },
+            { owner: "Yang Hao & Guo Zhuhui", depts: "110.1 R&D - Digital", headcount: 29, cost: 11122941 },
+            { owner: "Chen Peng", depts: "110.2 R&D - Digital", headcount: 17, cost: 8345283 },
+            { owner: "Adam Chen", depts: "135.1 R&D - Technology Innovation Lab, 310.1 Marketing – Product", headcount: 21, cost: 7912114 },
+            { owner: "Tian Meng", depts: "520 G&A - Finance", headcount: 16, cost: 6445293 },
+            { owner: "Yang Hao", depts: "110 R&D - Digital", headcount: 10, cost: 4334649 },
+            { owner: "Michael Ching", depts: "300 Marketing - Corporate Marke, 310.2 Marketing – Product", headcount: 6, cost: 4219367 },
+            { owner: "David Dai", depts: "530 G&A - HR", headcount: 6, cost: 2222522 },
+            { owner: "Joel Li", depts: "140 R&D - PMO", headcount: 2, cost: 256850 }
+        ];
+
+        // 格式化数字
+        function fmt(n) {
+            return n.toLocaleString('zh-CN');
+        }
+
+        // 渲染部门表格
+        const deptTbody = document.getElementById('deptTableBody');
+        deptData.forEach(function(item) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.dept}</td>
+                <td>${item.headcount}</td>
+                <td>${fmt(item.cost)}</td>
+                <td class="cost-highlight">${fmt(item.avg)}</td>
+            `;
+            deptTbody.appendChild(tr);
+        });
+
+        // 渲染负责人表格
+        const ownerTbody = document.getElementById('ownerTableBody');
+        ownerData.forEach(function(item) {
+            const tr = document.createElement('tr');
+            // 将部门列表用 <br> 换行显示
+            const deptList = item.depts.split(', ').map(function(d) {
+                return `<span style="display:inline-block; background:#f1f5f9; border-radius:4px; padding:2px 8px; margin:2px; font-size:12px;">${d}</span>`;
+            }).join(' ');
+            tr.innerHTML = `
+                <td><strong>${item.owner}</strong></td>
+                <td style="text-align:left; max-width:500px;">${deptList}</td>
+                <td>${item.headcount}</td>
+                <td>${fmt(item.cost)}</td>
+            `;
+            ownerTbody.appendChild(tr);
+        });
+
+        // ECharts 柱状图（横向）
+        var chart = echarts.init(document.getElementById('chart'));
+        var names = deptData.map(function(item) { return item.dept; });
+        var avgs = deptData.map(function(item) { return item.avg; });
+
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: { type: 'shadow' },
+                formatter: function(params) {
+                    const v = params[0];
+                    const idx = v.dataIndex;
+                    const d = deptData[idx];
+                    return `<strong>${d.dept}</strong><br/>平均成本：${fmt(d.avg)} 元<br/>人数：${d.headcount}<br/>总成本：${fmt(d.cost)} 元`;
+                }
+            },
+            grid: {
+                left: '20%',
+                right: '6%',
+                top: '10px',
+                bottom: '30px',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'value',
+                name: '平均成本（元）',
+                nameTextStyle: { fontSize: 13, color: '#64748b' },
+                axisLabel: {
+                    formatter: function(value) {
+                        return (value / 10000).toFixed(1) + '万';
+                    }
+                },
+                splitLine: { lineStyle: { color: '#e8ecf1', type: 'dashed' } }
+            },
+            yAxis: {
+                type: 'category',
+                data: names,
+                axisLabel: {
+                    fontSize: 11,
+                    width: 200,
+                    overflow: 'truncate',
+                    color: '#334155'
+                },
+                axisTick: { show: false },
+                axisLine: { show: false }
+            },
+            series: [{
+                type: 'bar',
+                data: avgs,
+                itemStyle: {
+                    borderRadius: [0, 6, 6, 0],
+                    color: {
+                        type: 'linear',
+                        x: 0, y: 0, x2: 1, y2: 0,
+                        colorStops: [
+                            { offset: 0, color: '#3b82f6' },
+                            { offset: 1, color: '#06b6d4' }
+                        ]
+                    }
+                },
+                barMaxWidth: 18,
+                label: {
+                    show: true,
+                    position: 'right',
+                    formatter: function(params) {
+                        return (params.value / 10000).toFixed(1) + '万';
+                    },
+                    fontSize: 11,
+                    color: '#475569'
+                }
+            }],
+            backgroundColor: '#ffffff'
+        };
+
+        chart.setOption(option);
+        window.addEventListener('resize', function() { chart.resize(); });
+    </script>
+</body>
+</html>
+```
